@@ -23,14 +23,13 @@ public class Unidades extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_unidades);
-        Intent intent = new Intent(this, Decenas.class);
         etUnidades = findViewById(R.id.etUnidades);
-        String unidades =  etUnidades.getText().toString();
+        buttonUnidades = findViewById(R.id.buttonUnidades);
 
         buttonUnidades.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myARL.launch(intent);
+                launchActivity(v);
             }
         });
 
@@ -40,17 +39,28 @@ public class Unidades extends AppCompatActivity {
                     @Override
                     public void onActivityResult(ActivityResult result) {
                         if (result.getResultCode() == Activity.RESULT_OK){
-                            Intent intent = result.getData();
-                            Intent sendBack = new Intent();
-                            String total = intent.getStringExtra("Centenas").toString() + intent.getStringExtra("Decenas").toString() + unidades;
-                            sendBack.putExtra("Total", total);
-                            setResult(RESULT_OK, sendBack);
-                        } else if (result.getResultCode() == Activity.RESULT_CANCELED){
-                            String error = "Sin mensaje de vuelta";
-                            Context context = getApplicationContext();
+                            //Recuperar decenas y centenas
+                            Intent intentRetorno = result.getData();
+                            String centenas = intentRetorno.getStringExtra("Centenas").toString();
+                            String decenas = intentRetorno.getStringExtra("Decenas").toString();
+
+                            //Leer unidades
+                            String unidades =  etUnidades.getText().toString();
+
+                            //Construir retorno
+                            String total = centenas+decenas+unidades;
+                            Intent intent = new Intent();
+                            intent.putExtra("Total", total);
+                            setResult(RESULT_OK, intent);
+                            finish();
                         }
                     }
                 }
         );
+    }
+
+    public void launchActivity (View v){
+        Intent intent = new Intent(this, Decenas.class);
+        myARL.launch(intent);
     }
 }

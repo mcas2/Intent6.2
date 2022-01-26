@@ -7,32 +7,40 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     Button buttonSeguir;
+    Button buttonSalir;
     TextView finalResult;
+    TextView binaryResult;
     ActivityResultLauncher<Intent> myARL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Intent intent = new Intent(this, Unidades.class);
 
         finalResult = findViewById(R.id.finalResult);
+        binaryResult = findViewById(R.id.binaryResult);
 
         buttonSeguir = findViewById(R.id.buttonSeguir);
         buttonSeguir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myARL.launch(intent);
+                launchActivity(v);
+            }
+        });
+
+        buttonSalir = findViewById(R.id.buttonSalir);
+        buttonSalir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                exit();
             }
         });
 
@@ -45,14 +53,21 @@ public class MainActivity extends AppCompatActivity {
                             Intent intent = result.getData();
                             String total = intent.getStringExtra("Total").toString();
                             finalResult.setText(total);
-
-                        } else if (result.getResultCode() == Activity.RESULT_CANCELED){
-                            String error = "Sin mensaje de vuelta";
-                            Context context = getApplicationContext();
-
+                            Integer totalInt = Integer.parseInt(total);
+                            String binario = Integer.toBinaryString(totalInt);
+                            binaryResult.setText(binario);
                         }
                     }
                 }
         );
     }
+
+    public void launchActivity (View v){
+        Intent intent = new Intent(this, Unidades.class);
+        myARL.launch(intent);
+    }
+
+    public void exit(){
+        this.finish();
+    };
 }

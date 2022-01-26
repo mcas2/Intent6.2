@@ -17,20 +17,20 @@ import android.widget.EditText;
 public class Decenas extends AppCompatActivity {
     ActivityResultLauncher<Intent> myARL;
     EditText etDecenas;
-    Button buttonUnidades;
+    Button buttonDecenas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_decenas);
-        Intent intent = new Intent(this, Centenas.class);
         etDecenas = findViewById(R.id.etDecenas);
-        String decenas =  etDecenas.getText().toString();
+        buttonDecenas = findViewById(R.id.buttonDecenas);
 
-        buttonUnidades.setOnClickListener(new View.OnClickListener() {
+
+        buttonDecenas.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myARL.launch(intent);
+                launchActivity(v);
             }
         });
 
@@ -40,19 +40,24 @@ public class Decenas extends AppCompatActivity {
                     @Override
                     public void onActivityResult(ActivityResult result) {
                         if (result.getResultCode() == Activity.RESULT_OK){
-                            Intent intent = result.getData();
-                            String centenas = intent.getStringExtra("Centenas");
+                            String decenas =  etDecenas.getText().toString();
 
-                            Intent sendBack = new Intent();
-                            sendBack.putExtra("Centenas", centenas);
-                            sendBack.putExtra("Decenas", decenas);
-                            setResult(RESULT_OK, sendBack);
-                        } else if (result.getResultCode() == Activity.RESULT_CANCELED){
-                            String error = "Sin mensaje de vuelta";
-                            Context context = getApplicationContext();
+                            Intent intentRetorno = result.getData();
+                            String centenas = intentRetorno.getStringExtra("Centenas").toString();
+
+                            Intent intent = new Intent();
+                            intent.putExtra("Centenas", centenas);
+                            intent.putExtra("Decenas", decenas);
+                            setResult(RESULT_OK, intent);
+                            finish();
                         }
                     }
                 }
         );
+    }
+
+    public void launchActivity (View v){
+        Intent intent = new Intent(this, Centenas.class);
+        myARL.launch(intent);
     }
 }
